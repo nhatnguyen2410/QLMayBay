@@ -1883,7 +1883,7 @@ void InVeBiHuy(int sove)
 void XuatDSVe(ChuyenBay cb,int max){
 	int x=xVe,y=yVe,dem;
 	int Size;
-	SetColor(ColorCYAN);
+	SetColor(ColorWHITE);
 	if(max <= 28)
 	{
 		Size = 1;
@@ -1938,7 +1938,7 @@ void XuatDSVe(ChuyenBay cb,int max){
 }
 
 void Khung_DatVe() {
-	resizeConsole(1000,600);
+//	resizeConsole(1000,600);
 	system("cls");
 	
 	Color(ColorCYAN);
@@ -2008,7 +2008,7 @@ void Khung_DatVe() {
 
 void Khung_XemVe()
 {
-	resizeConsole(1000,600);
+//	resizeConsole(1000,600);
 	system("cls");
 	
 	Color(ColorCYAN);
@@ -2129,7 +2129,7 @@ void Khung_DS_HK_Trong_CB()
 	gotoxy(27, 2);
 	cout << "DANH SACH HANH KHACH CUA CHUYEN BAY CO MA: "; // 80,2
 	gotoxy(25,3);
-	cout << "Ngay gio thoi hanh: "; // 49,3
+	cout << "Ngay gio khoi hanh: "; // 49,3
 	gotoxy(46,3); cout<<"/";
 	gotoxy(49,3); cout<<"/";
 	gotoxy(58,3); cout<<":";
@@ -2574,7 +2574,7 @@ void Khung_SuaChuyenBay()
 
 void Khung_ChuyenBay()
 {
-	resizeConsole(1000,600);
+//	resizeConsole(1000,600);
 	Color(ColorCYAN);
 	gotoxy(45, 2);
 	cout << "DANH SACH CHUYEN BAY"; 
@@ -2707,7 +2707,7 @@ void KhungDanhSachCBTrongNgay()
 {
 	SetBGColor(ColorBLACK);
 	clrscr();
-	resizeConsole(1000,600);
+//	resizeConsole(1000,600);
 	Color(ColorCYAN);
 	gotoxy(30, 2);
 	cout << "DANH SACH CHUYEN BAY TRONG NGAY"; 
@@ -3009,7 +3009,7 @@ void display(){
 	
 //    make border
     CursorStatus(25, TRUE);
-    Color(12);
+    Color(ColorWHITE);
     //bien trai
     gotoxy(10+10, 1);
     printf("%c", 201);
@@ -3045,31 +3045,31 @@ void display(){
     cout << " HOC VIEN CONG NGHE BUU CHINH VIEN THONG ";
 
     gotoxy(10+26, 4);
-    Color(244);
+    Color(ColorWHITE);
     cout << " KHOA: CNTT2 ";
     gotoxy(10+16,5);
-    Color(11);
+    Color(ColorWHITE);
     cout<<"MON: CAU TRUC DU LIEU & GIAI THUAT";
     gotoxy(10+78, 3);
     //Ten De tai
-    Color(10);
+    Color(ColorWHITE);
     gotoxy(10+39, 9);
     cout << " QUAN LY CHUYEN BAY ";
     //TEN CHUONG TRINH
-	Color(12);
+	Color(ColorWHITE);
 	
-    TextSlide("LUONG DINH KHANG - N18DCCN093",35,19,13);
-    TextSlide("LE BA KHANH      - N18DCCN099",35,20,13);
+    TextSlide("VO DANG KE DINH - N18DCCN043",35,19,ColorWHITE);
+    TextSlide("NGUYEN LONG NHAT      - N18DCCN141",35,20,ColorWHITE);
     
     for (int i = 0; i< 5 ;i++){
-	Color(15);
+	Color(ColorWHITE);
     gotoxy(10+15,11); cout <<"    __          __     _               ______      _   ";
 	gotoxy(10+15,12); cout <<"    ||\\        /||    / \\  \\\\    //    ||   \\\\    / \\  \\\\    //   ";
 	gotoxy(10+15,13); cout <<"    || \\      //||   / _ \\  \\\\  //     ||___||   / _ \\  \\\\  //     ";
 	gotoxy(10+15,14); cout <<"    ||  \\    // ||  / |__|\\  \\\\//      ||___||  / |__|\\  \\\\//     ";
 	gotoxy(10+15,15); cout <<"    ||   \\  //  || /  ___  \\  ||       ||   || /  ___  \\  ||          ";
 	gotoxy(10+15,16);cout << "    ||    \\//   ||/__/   \\__\\ ||       ||___///__/   \\__\\ ||   ";
-	Color(12);Sleep(400);
+	Color(ColorWHITE);Sleep(400);
 	gotoxy(10+15,11); cout <<"    __          __     _               ______      _   ";
 	gotoxy(10+15,12); cout <<"    ||\\        /||    / \\  \\\\    //    ||   \\\\    / \\  \\\\    //   ";
 	gotoxy(10+15,13); cout <<"    || \\      //||   / _ \\  \\\\  //     ||___||   / _ \\  \\\\  //     ";
@@ -4806,8 +4806,8 @@ void NhapMayBay(ListMayBay &lmb)
 						trung = true;
 					}	
 				}while(trung == false);
-	     		//gotoxy(4,2); cout<<"KQ1: "<<mb.soHieuMB;
-				if (strcmp(mb.soHieuMB, "") == 0) break;
+	     	
+//				if (strcmp(mb.soHieuMB, "") == 0) break;
 				
 				// NHAP LOAI MAY BAY
 				do{
@@ -4838,6 +4838,8 @@ void NhapMayBay(ListMayBay &lmb)
 						trung = true;
 					}
 				}while(trung == false);
+				
+			
 				if (strcmp(mb.loaiMB, "") == 0) break;
 				
 	
@@ -5707,11 +5709,18 @@ void DatVeMB(ListMayBay lmb,listCB list){
 		}
 		else if(SearchHK(tree,cmnd)==NULL)
 		{
-			gotoxy(xThongBao, yThongBao); cout << "CMND khong dung, moi nhap lai!";
-			Sleep(1000);
-			gotoxy(xThongBao, yThongBao); cout << "                                           ";
-			gotoxy(box2x+22,box2y-3);cout<<"                        ";
-			goto NhapCMND;
+			gotoxy(xThongBao, yThongBao); cout << "CMND khong duoc tim thay trong csdl";
+//			Sleep(1000);
+//			gotoxy(xThongBao, yThongBao); cout << "                                           ";
+//			gotoxy(box2x+22,box2y-3);cout<<"                        ";
+//			goto NhapCMND;
+			if(XacNhanTaoHanhKhach()==1)
+			{
+					NhapHanhKhach(tree);	
+					clrscr();
+					return;
+			}
+			return;
 		}
 		else
 		{
@@ -6591,6 +6600,7 @@ void Danh_Sach_HK_Trong_CB(listCB &list, ListMayBay lmb)
 }
 
 int main(){
+//	 system("color 7a");
 		display();
 		ListMayBay lmb;
 		listCB list;
