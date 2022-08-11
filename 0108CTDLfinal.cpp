@@ -11,9 +11,15 @@
 #include <conio.h>
 #include <sstream> 
 #include <string>
+#include "Customer.h"
+#include "Time.h"
+#include "Plane.h"
+#include "Flight.h"
 #define MAXMB 300
 #define MAXVE 30
 #define PageCB 1
+
+
 //-------------------------COLOR-----------------------
 #define ColorBLACK			0
 #define ColorDARKBLUE		1
@@ -75,29 +81,14 @@ using namespace std;
 
 
 //------------------------------time
-struct ThoiGian{
-	int gio, phut, ngay, thang, nam;
-};
 
 
 //---------------------Ve may bay----------------------------------------------------------------------------------------------------
-struct Ve {
-    char cmnd[16];
-//    string TTVe;
-};
+
 
 
 //------------------------May Bay----------------------------------------------------------------------------------------------------
-struct mayBay{
-	char soHieuMB[15];
-	char loaiMB[40];
-	int soCho;
-};
-struct listMayBay{
-	int soluong;
-	mayBay *maybay[MAXMB];
-};
-typedef struct listMayBay ListMayBay;
+
 int Empty_MB(ListMayBay dsMB)
 {
 	return dsMB.soluong == 0;
@@ -134,37 +125,13 @@ int Get_socho(ListMayBay lmb, char soHieu[])
 	return -1;
 }
 //----------------------Chuyen bay----------------------------------------------------------------------------------------------------
-struct ChuyenBay{
-	char MaChuyenBay[15];
-	char SanBayDen[20];
-    ThoiGian ThoiGianDi;
-	char soHieuMB[15];
-	int TrangThai;// 0: huy chuyen 1: con ve, 2: het ve,3: hoan tat
-	int TongSoDaBan;
-	Ve *DsVe;
-};
 
-
-struct nodeCB {
-	ChuyenBay CB;
-	nodeCB *next;
-};
-typedef nodeCB *ptrCB;
-
-
-struct listCB
-{
-	nodeCB *Head;
-	nodeCB *Tail;
-	int SoLuongChuyenBay;
-};
-typedef struct listCB* ListCB;
 
 //------CHUC NANG CHUYEN BAY-----------------
 void NhapChuyenBay(ListMayBay lmb,listCB &list);
 void MenuChuyenBay(ListMayBay lmb,listCB &list);
 void Danh_Sach_MayBay(ListMayBay &lmb,listCB &list);
-void MenuDatVeMB(ListMayBay lmb,listCB list);
+void UIBooking(ListMayBay lmb,listCB list);
 void DanhSachChuyenBayTheoNgay(ListMayBay lmb,listCB list);
 void MenuHuyVe(ListMayBay lmb,listCB list);
 // KHOI TAO CHUYEN BAY
@@ -461,34 +428,19 @@ int Dem(listCB lcb, char soHieu[]) //
 
 
 //--------------------------Hanh khach----------------------------------------------------------------------------------------------------
-struct hanhKhach{
-    char cmnd[16];// day la key chinh
-	char ho[20];
-	char ten[10];
-	char phai[10];// 1 la nam , 0 la nu
-	bool Booked;// kiem tra xem da mua ve chua
-		
-};
-typedef struct hanhKhach HanhKhach;
-
-struct Node_HK{
-	HanhKhach HK;
-	Node_HK *pLeft;
-	Node_HK *pRight;
-};
 
 
 
-//typedef Node_HK *TREE_HK;
-typedef Node_HK *NODPTR;
 
-NODPTR tree = NULL;
+
+
+
 
 
 //CHUC NANG HANH KHACH
-void NhapHanhKhach(NODPTR &tree);
+void InputCustomer(NODPTR &tree);
 
-int XacNhanTaoHanhKhach()
+int ConfirmCustomer()
 {
 	int x = 45, y = 19;
 	gotoxy(40, 15);
@@ -558,33 +510,7 @@ int XacNhanTaoHanhKhach()
 }
 
 
-void InitTreeHK(NODPTR &tree_hk)
-{
-	tree_hk = NULL;
-}
 
-bool Empty_HK(NODPTR tree_hk)
-{
-	return tree_hk == NULL;
-}
-//search
-Node_HK *SearchHK(NODPTR tree_hk, char cmnd[])
-{
-	if (tree_hk != NULL)
-	{
-		Node_HK *pNode = tree_hk;
-		while (pNode != NULL)
-		{
-			if (strcmp(pNode->HK.cmnd, cmnd) == 0)
-				return pNode;
-			else if (strcmp(pNode->HK.cmnd, cmnd) > 0)
-				pNode = pNode->pLeft;
-			else if (strcmp(pNode->HK.cmnd, cmnd) < 0)
-				pNode = pNode->pRight;
-		}
-	}
-	return NULL;
-}
 //CHUC NANG LIEN QUAN CHUYEN BAY
 int CheckHKtrongCB(listCB list,ListMayBay lmb,char MaCB[],char cmnd[]);
 int SearchVeHK(listCB list,ListMayBay lmb,char MaCB[],char cmnd[]);
@@ -594,23 +520,6 @@ void DanhSachVeTrongCB(ListMayBay lmb,listCB list);
 void Danh_Sach_Thong_Ke_So_Luot_Bay(listCB lcb, ListMayBay lmb);	
 //
 
-void InsertHKToTree(NODPTR &tree_hk, HanhKhach hk)
-{
-	if (tree_hk == NULL)
-	{
-		Node_HK *pNode = new Node_HK;
-		pNode->HK = hk;
-		pNode->pLeft = pNode->pRight = NULL;
-		tree_hk = pNode;
-	}
-	else
-	{
-		if (atoi(tree_hk->HK.cmnd) > atoi(hk.cmnd))
-			InsertHKToTree(tree_hk->pLeft, hk);
-		else if (atoi(tree_hk->HK.cmnd) < atoi(hk.cmnd))
-			InsertHKToTree(tree_hk->pRight, hk);
-	}
-}
 
 
 //------------------------------------------------Constraint------------------------------------------------------------------------------------
@@ -1616,7 +1525,7 @@ void DocFileHanhKhach(NODPTR &tree_hk)
 {
 	ifstream filein;
 	filein.open("hanhkhach.txt", ios::in);
-	HanhKhach hk;
+	Customer hk;
 	string tmp; // lay ky tu xuong dong 
 	do{
 		string cmnd, hoten;
@@ -2236,7 +2145,7 @@ void Khung_DS_HK_Trong_CB()
 }
 
 
-void KhungNhapCMND(){
+void UICmnd(){
 		SetColor(14); // vang dam
 	gotoxy(box2x, 33 - 8); cout << char(201);
 	for(int i = 1; i < box2s + 1; i++) cout << char(205);
@@ -2979,7 +2888,7 @@ void menu(int vt,ListMayBay lmb, listCB list) {
 		}
 		case 3: // DAT VE MAY BAY
 		{
-			MenuDatVeMB(lmb,list);
+			UIBooking(lmb,list);
 			break;
 		}
 		case 4: // HUY VE MAY BAY
@@ -3032,12 +2941,12 @@ void display(){
     CursorStatus(25, TRUE);
     Color(ColorWHITE);
     //bien trai
-    gotoxy(10+10, 1);
-    printf("%c", 201);
-    for (int i = 2; i < 25; i++) {
-        gotoxy(10+10, i);
-        printf("%c", 186); 
-    }
+//    gotoxy(10+10, 1);
+//    printf("%c", 201);
+//    for (int i = 2; i < 25; i++) {
+//        gotoxy(10+10, i);
+//        printf("%c", 186); 
+//    }
     //bien duoi
     gotoxy(10+10, 25);
     printf("%c", 200); Sleep(5);
@@ -3047,12 +2956,12 @@ void display(){
         printf("%c", 205); 
     }
     //bien phai
-    gotoxy(10+90, 25);
-    printf("%c", 188);
-    for (int i = 24; i > 1; i--) {
-        gotoxy(10+90, i);
-        printf("%c", 186); 
-    }
+//    gotoxy(10+90, 25);
+//    printf("%c", 188);
+//    for (int i = 24; i > 1; i--) {
+//        gotoxy(10+90, i);
+//        printf("%c", 186); 
+//    }
     //bien tren
     gotoxy(10+90, 1);
     printf("%c", 187);
@@ -3062,13 +2971,13 @@ void display(){
     }
     //Thong tin truong
     Color(10);
-    gotoxy(10+13, 3);
+    gotoxy(10+27, 3);
     cout << " HOC VIEN CONG NGHE BUU CHINH VIEN THONG ";
 
-    gotoxy(10+26, 4);
+    gotoxy(10+40, 4);
     Color(ColorWHITE);
     cout << " KHOA: CNTT ";
-    gotoxy(10+16,5);
+    gotoxy(10+30,5);
     Color(ColorWHITE);
     cout<<"MON: CAU TRUC DU LIEU & GIAI THUAT";
     gotoxy(10+78, 3);
@@ -3103,16 +3012,16 @@ void display(){
 //-- GIAO DIEN MENU
 	void MenuInterface(listMayBay lmb,listCB list){
 		clrscr();
-		DrawFrame(3,1,110,28);
+//		DrawFrame(3,1,110,28);
 		gotoxy(50,3);
 		Color(ColorRED);
 		SetBGColor(ColorBLACK);
 		
 		cout<<"MENU QUAN LY CHUYEN BAY";
-		DrawFrame(10,6,40,3);
-		DrawFrame(10,11,40,3);
-		DrawFrame(10,15,40,3);
-		DrawFrame(10,20,40,3);
+//		DrawFrame(10,6,40,3);
+//		DrawFrame(10,11,40,3);
+//		DrawFrame(10,15,40,3);
+//		DrawFrame(10,20,40,3);
 		
 		gotoxy(10,8);cout<<char(186);
 		gotoxy(10,7);cout<<char(186);
@@ -3126,10 +3035,10 @@ void display(){
 		gotoxy(10,22);cout<<char(186);
 		gotoxy(10,21);cout<<char(186);
 		//Cot 2 
-		DrawFrame(60,6,42,3);
-		DrawFrame(60,11,42,3);
-		DrawFrame(60,15,42,3);
-		DrawFrame(60,20,42,3);
+//		DrawFrame(60,6,42,3);
+//		DrawFrame(60,11,42,3);
+//		DrawFrame(60,15,42,3);
+//		DrawFrame(60,20,42,3);
 		
 		gotoxy(60,22);cout<<char(186);
 		gotoxy(60,21);cout<<char(186);
@@ -5587,7 +5496,7 @@ void NhapVeMB(ListMayBay lmb,listCB &list,NODPTR tree,char cmnd[16], char *MaChu
 	string temp;
 	nodeCB *cb =  Search_MaCB(list,MaChuyenBayCanTim);
 	mayBay *mb = SearchMB(lmb,cb->CB.soHieuMB);
-	Node_HK *hk = SearchHK(tree,cmnd);
+	NodeCustomer *hk = SearchCustomer(tree,cmnd);
 	//XUAT THONG TIN
 	XuatThongTin:
 	Khung_DatVe();
@@ -5726,14 +5635,14 @@ bool checkFlightSameTime(listCB list,ListMayBay lmb, nodeCB *cb,char cmnd[16]){
 }
 
 
-void DatVeMB(ListMayBay lmb,listCB list){
-	KhungNhapCMND();
+void Booking(ListMayBay lmb,listCB list){
+	UICmnd();
 	char cmnd[16];
 	bool Booked = false;
 	string temp;
 	char chuyenbay[15];
 	int xThongBao = 56, yThongBao = 24;
-	NhapCMND:
+	InputCmnd:
 		gotoxy(box2x+22,box2y-3);
 		fflush(stdin);
 		temp = nhapChuoi(box2x+22,box2y-3);	
@@ -5741,9 +5650,9 @@ void DatVeMB(ListMayBay lmb,listCB list){
 		strcpy(cmnd, fix_Ma(cmnd));
 		if(!strcmp(cmnd,""))
 		{
-			if(XacNhanTaoHanhKhach()==1)
+			if(ConfirmCustomer()==1)
 			{
-					NhapHanhKhach(tree);	
+					InputCustomer(tree);	
 					clrscr();
 					return;
 			}
@@ -5759,18 +5668,18 @@ void DatVeMB(ListMayBay lmb,listCB list){
 		Sleep(1000);
 		gotoxy(xThongBao, yThongBao); cout << "                                           ";
 		gotoxy(box2x+22,box2y-3);cout<<"                        ";
-		goto NhapCMND;
+		goto InputCmnd;
 		}
-		else if(SearchHK(tree,cmnd)==NULL)
+		else if(SearchCustomer(tree,cmnd)==NULL)
 		{
 			gotoxy(xThongBao, yThongBao); cout << "CMND khong duoc tim thay trong csdl";
 //			Sleep(1000);
 //			gotoxy(xThongBao, yThongBao); cout << "                                           ";
 //			gotoxy(box2x+22,box2y-3);cout<<"                        ";
-//			goto NhapCMND;
-			if(XacNhanTaoHanhKhach()==1)
+//			goto InputCmnd;
+			if(ConfirmCustomer()==1)
 			{
-					NhapHanhKhach(tree);	
+					InputCustomer(tree);	
 					clrscr();
 					return;
 			}
@@ -5933,7 +5842,7 @@ void HuyVeMB(ListMayBay lmb,listCB list)
 		int xThongBao = 52,yThongBao = 5;
 		XemVeMB(lmb,list,chuyenbay);
 		KhungNhap1CMND(44,6);
-		NhapCMND:           // NHAP CMND
+		InputCmnd:           // NHAP CMND
 		gotoxy(49,7);
 		fflush(stdin);
 		char cmnd[15];
@@ -5948,7 +5857,7 @@ void HuyVeMB(ListMayBay lmb,listCB list)
 			Sleep(1000);
 			gotoxy(xThongBao, yThongBao); cout << "                         ";
 			gotoxy(49,7);cout<<"                        ";
-			goto NhapCMND;
+			goto InputCmnd;
 		}
 		else if(temp=="exit")
 		{
@@ -5960,7 +5869,7 @@ void HuyVeMB(ListMayBay lmb,listCB list)
 		Sleep(1000);
 		gotoxy(xThongBao, yThongBao); cout << "                                           ";
 		gotoxy(49,7);cout<<"                        ";
-		goto NhapCMND;
+		goto InputCmnd;
 		}
 		else if(CheckHKtrongCB(list,lmb,chuyenbay,cmnd)!=1)
 		{
@@ -5968,7 +5877,7 @@ void HuyVeMB(ListMayBay lmb,listCB list)
 			Sleep(1000);
 			gotoxy(xThongBao, yThongBao); cout << "                                           ";
 //			gotoxy(box2x+22,box2y-3);cout<<"                        ";
-			goto NhapCMND;
+			goto InputCmnd;
 		}
 		else
 		{
@@ -6089,16 +5998,16 @@ void InputChuyenBay(ListMayBay lmb,listCB list)
 
 }
 	
-void NhapHanhKhach(NODPTR &tree)
+void InputCustomer(NODPTR &tree)
 {   
 	int  x = 28;
 	int demfield = 0;
 	char cmnd[16];
 	fflush(stdin);
 	Khung_NhapHanhKhach();
-	HanhKhach hk;
+	Customer hk;
 	string temp;
-	NhapCMND:
+	InputCmnd:
 	fflush(stdin);
 	gotoxy(boxx + 28, boxy + 2) ;
     temp = nhapChuoi(boxx + 28, boxy + 2);
@@ -6110,7 +6019,7 @@ void NhapHanhKhach(NODPTR &tree)
 	    Sleep(1000);
 	    gotoxy(boxx + 14, boxy + 12); cout << "                                           ";
 	    gotoxy(box2x+22,box2y-3);cout<<"                        ";
-	    goto NhapCMND;
+	    goto InputCmnd;
     }
     else if(strlen(cmnd)!=9)
 	{
@@ -6118,9 +6027,9 @@ void NhapHanhKhach(NODPTR &tree)
 	    Sleep(1000);
 	    gotoxy(boxx + 14, boxy + 12); cout << "                                           ";
 	    gotoxy(boxx + 28, boxy + 2);cout<<"                        ";
-	    goto NhapCMND;
+	    goto InputCmnd;
     }
-    else if(SearchHK(tree,cmnd)!=NULL)
+    else if(SearchCustomer(tree,cmnd)!=NULL)
 	{
 		gotoxy(boxx + 14, boxy + 12); cout << "BAN DA LA HANH KHACH!";
 	    Sleep(1000);
@@ -6414,7 +6323,7 @@ int CheckDSVe(listCB list,ListMayBay lmb,char MaCB[])
 	return 0;
 }	
 
-void MenuDatVeMB(ListMayBay lmb,listCB list){
+void UIBooking(ListMayBay lmb,listCB list){
 	int trang = 0, tongtrang = 0;
 	int key;
 	XuatChuyenBay:
@@ -6448,8 +6357,8 @@ void MenuDatVeMB(ListMayBay lmb,listCB list){
 					break;
 				}
 				case Insert:
-//					KhungNhapCMND();
-					DatVeMB(lmb,list);
+//					UICmnd();
+					Booking(lmb,list);
 					goto XuatChuyenBay;
 					break;
 				default:
@@ -6606,7 +6515,7 @@ void Danh_Sach_HK_Trong_CB(listCB &list, ListMayBay lmb) // In ra cacs hanh khac
 	             	char cmnd[16];
 					strcpy(cmnd,"");
 					strcpy(cmnd,pNodeCB->CB.DsVe[i].cmnd);
-					Node_HK *pHK = SearchHK(tree, cmnd);
+					NodeCustomer *pHK = SearchCustomer(tree, cmnd);
 					char hoten[150]; 
 					strcpy(hoten,"");
 					strcat(hoten, pHK->HK.ho );
@@ -6654,7 +6563,7 @@ void Danh_Sach_HK_Trong_CB(listCB &list, ListMayBay lmb) // In ra cacs hanh khac
 		}
 		else if (c == ESC)
 		{
-			clrscr();DatVeMB;
+			clrscr();Booking;
 			MenuInterface(lmb,list);
 			break;
 		}
