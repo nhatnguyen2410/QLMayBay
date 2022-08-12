@@ -1,6 +1,7 @@
 #ifndef CUSTOMER
 #define CUSTOMER
-
+#include "Flight.h"
+#include "Plane.h"
 struct Customer{
 	char cmnd[16];// day la key chinh
 	char ho[20];
@@ -67,6 +68,20 @@ void InsertHKToTree(NODPTR &tree_hk, Customer hk)
 	}
 }
 
+int CheckHKtrongCB(listCB list,ListMayBay lmb,char MaCB[],char cmnd[])
+{
+	ChuyenBay cb;
+	int socho;
+	cb = Search_Flight(list,MaCB)->CB;
+	socho = Get_slot(lmb,cb.soHieuMB);
+	for(int dem= 1;dem <= socho;dem++)
+	{
+		if(!strcmp(cb.DsVe[dem].cmnd,cmnd)){
+			return 1;
+		}
+	}
+	return 0;
+}
 
 
 #endif

@@ -115,6 +115,8 @@ int Check_SoHieu_MB(ListMayBay listMB, char sohieu[])
 		return -1;
 	}
 }
+
+//----------------------Chuyen bay----------------------------------------------------------------------------------------------------
 int Get_socho(ListMayBay lmb, char soHieu[])
 {
 	for (int i = 0; i < lmb.soluong; i++)
@@ -124,8 +126,27 @@ int Get_socho(ListMayBay lmb, char soHieu[])
 	}
 	return -1;
 }
-//----------------------Chuyen bay----------------------------------------------------------------------------------------------------
-
+nodeCB *Search_MaCB(listCB list, char macb[]){
+	nodeCB *temp = list.Head;
+	if (temp == NULL){
+	
+		return NULL;
+	}
+		
+	else
+	{
+	
+		for (; temp != NULL; temp=temp->next)
+		{
+			if (strcmp(temp->CB.MaChuyenBay, macb) == 0){
+			
+				return temp;
+			}
+				
+		}
+	}
+	return NULL;
+}
 
 //------CHUC NANG CHUYEN BAY-----------------
 void NhapChuyenBay(ListMayBay lmb,listCB &list);
@@ -333,16 +354,7 @@ bool CleanUpFlightList(listCB &list)
 }
 
 //-------------------------CHUC NANG VE -------------------------
-int InsertVe(ChuyenBay &cb,int vitri,char cmnd[16]){
-	if (strcmp(cb.DsVe[vitri].cmnd,"\0"))
-		return 0;
-	else
-	{
-		strcpy(cb.DsVe[vitri].cmnd,cmnd);
-		cb.TongSoDaBan++;
-		return 1;
-	}
-}
+
 
 int XacNhanDatVe(int i)
 {
@@ -512,7 +524,6 @@ int ConfirmCustomer()
 
 
 //CHUC NANG LIEN QUAN CHUYEN BAY
-int CheckHKtrongCB(listCB list,ListMayBay lmb,char MaCB[],char cmnd[]);
 int SearchVeHK(listCB list,ListMayBay lmb,char MaCB[],char cmnd[]);
 int CheckDSVe(listCB list,ListMayBay lmb,char MaCB[]);
 void Danh_Sach_HK_Trong_CB(listCB &list, ListMayBay lmb);
@@ -999,27 +1010,7 @@ int Check_MaMBinCB(listCB list, char maMB[])
 }
 
 
-nodeCB *Search_MaCB(listCB list, char macb[]){
-	nodeCB *temp = list.Head;
-	if (temp == NULL){
-	
-		return NULL;
-	}
-		
-	else
-	{
-	
-		for (; temp != NULL; temp=temp->next)
-		{
-			if (strcmp(temp->CB.MaChuyenBay, macb) == 0){
-			
-				return temp;
-			}
-				
-		}
-	}
-	return NULL;
-}
+
 
 
 int Check_MaCB(listCB list, char macb[])
@@ -1033,28 +1024,6 @@ int Check_MaCB(listCB list, char macb[])
 
 
 
-int Check_NoiDen(listCB list, char noiden[])
-{
-
-	nodeCB *temp = list.Head;
-	if (temp == NULL){
-	
-		return 0;
-	}
-		
-	else
-	{
-		for (; temp != NULL; temp=temp->next)
-		{
-			if (strcmp(temp->CB.SanBayDen, noiden) == 0){
-			
-				return 1;
-			}
-				
-		}
-	}
-	return 0;
-}
  
 int CheckThoiGianNoiDen(ChuyenBay cb,ThoiGian tg,char noiden[])
 {
@@ -5602,37 +5571,7 @@ void NhapVeMB(ListMayBay lmb,listCB &list,NODPTR tree,char cmnd[16], char *MaChu
 		}
 }
 
-bool checkFlightSameTime(listCB list,ListMayBay lmb, nodeCB *cb,char cmnd[16]){
-	nodeCB *temp = list.Head;
-	if (temp == NULL){
-	
-		return false;
-	}
-	else{
-		for (; temp != NULL; temp=temp->next)
-		{
-			if (strcmp(temp->CB.MaChuyenBay, cb->CB.MaChuyenBay) != 0){
-				if(temp->CB.ThoiGianDi.nam==cb->CB.ThoiGianDi.nam 
-					&& temp->CB.ThoiGianDi.thang==cb->CB.ThoiGianDi.thang
-					&& temp->CB.ThoiGianDi.ngay==cb->CB.ThoiGianDi.ngay
-					&& temp->CB.ThoiGianDi.gio ==cb->CB.ThoiGianDi.gio
-					&& temp->CB.ThoiGianDi.phut == cb->CB.ThoiGianDi.phut){
-						int socho=Get_socho(lmb,temp->CB.soHieuMB);
-						
-						for(int i=1;i<=socho;i++){
-							if(strcmp(temp->CB.DsVe[i].cmnd,cmnd)==0){
-								return false;
-							}
-						}
-					
-					}
-			}
-				
-		}
-	}
-	return true;
-	
-}
+
 
 
 void Booking(ListMayBay lmb,listCB list){
@@ -5772,25 +5711,7 @@ void XemVeMB(ListMayBay lmb,listCB list,char *MaChuyenBayCanTim)
 	gotoxy(64,1);cout<<cb->CB.SanBayDen;
 	gotoxy(90,1);cout<<cb->CB.ThoiGianDi.ngay<<"/"<<cb->CB.ThoiGianDi.thang<<"/"<<cb->CB.ThoiGianDi.nam<<"  "<<cb->CB.ThoiGianDi.gio<<":"<<cb->CB.ThoiGianDi.phut;
 }
-int Huy1vemb(ListMayBay lmb,ChuyenBay &cb,char cmnd[15])
-{
-	int socho = Get_socho(lmb,cb.soHieuMB);
-	for (int i = 1; i<=socho;i++)
-	{
-		if(strcmp(cb.DsVe[i].cmnd,cmnd)==0)
-		{
-			if(cb.TrangThai==2)
-			{
-				cb.TrangThai = 1; // HET VE -> CON VE
-			}
-			
-			cb.TongSoDaBan--;
-			strcpy(cb.DsVe[i].cmnd,"");
-			return i;
-		}
-	}
-	return 0;
-}
+
 
 void HuyVeMB(ListMayBay lmb,listCB list)
 {
@@ -6293,20 +6214,7 @@ int SearchVeHK(listCB list,ListMayBay lmb,char MaCB[],char cmnd[]){
 	
 }
 
-int CheckHKtrongCB(listCB list,ListMayBay lmb,char MaCB[],char cmnd[])
-{
-	ChuyenBay cb;
-	int socho;
-	cb = Search_MaCB(list,MaCB)->CB;
-	socho = Get_socho(lmb,cb.soHieuMB);
-	for(int dem= 1;dem <= socho;dem++)
-	{
-		if(!strcmp(cb.DsVe[dem].cmnd,cmnd)){
-			return 1;
-		}
-	}
-	return 0;
-}
+
 
 int CheckDSVe(listCB list,ListMayBay lmb,char MaCB[])
 {
