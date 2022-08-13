@@ -33,7 +33,8 @@ struct listCB
 };
 typedef struct listCB* ListCB;
 
-nodeCB *Search_Flight(listCB list, char macb[]){
+
+nodeCB *Search_MaCB(listCB list, char macb[]){
 	nodeCB *temp = list.Head;
 	if (temp == NULL){
 	
@@ -54,6 +55,8 @@ nodeCB *Search_Flight(listCB list, char macb[]){
 	}
 	return NULL;
 }
+
+
 int Get_slot(ListMayBay lmb, char soHieu[])
 {
 	for (int i = 0; i < lmb.soluong; i++)
@@ -149,4 +152,200 @@ int Check_NoiDen(listCB list, char noiden[])
 	}
 	return 0;
 }
+int CheckDSVe(listCB list,ListMayBay lmb,char MaCB[])
+{
+	ChuyenBay cb;
+	int socho;
+	cb = Search_MaCB(list,MaCB)->CB;
+	socho = Get_slot(lmb,cb.soHieuMB);
+	for(int dem= 1;dem <= socho;dem++)
+	{
+		if(strcmp(cb.DsVe[dem].cmnd,"") ){
+			return 1;
+		}
+	}
+	return 0;
+}	
+
+int Check_MaCB(listCB list, char macb[])
+{
+	if(Search_MaCB(list,macb)!=NULL){
+		return 1;
+	}
+	return -1;
+}
+nodeCB *Search_MaMBinCB(listCB list, char maMB[]){
+	nodeCB *temp = list.Head;
+	if (temp == NULL){
+	
+		return NULL;
+	}
+		
+	else
+	{
+	
+		for (; temp != NULL; temp=temp->next)
+		{
+			if (strcmp(temp->CB.soHieuMB, maMB) == 0){
+			
+				return temp;
+			}
+				
+		}
+	}
+	return NULL;
+}
+int Check_MaMBinCB(listCB list, char maMB[])
+{
+	if(Search_MaMBinCB(list,maMB)!=NULL){
+		return 1;
+	}
+	return -1;
+}
+
+int CheckThoiGianNoiDen(ChuyenBay cb,ThoiGian tg,char noiden[])
+{
+			if (cb.ThoiGianDi.ngay == tg.ngay )
+			{
+				if(cb.ThoiGianDi.thang == tg.thang)
+				{
+					if(cb.ThoiGianDi.nam == tg.nam)
+					{
+						if(strcmp(cb.SanBayDen,noiden)==0)
+						{
+							return 1;
+						}
+					}
+				}
+			}
+	return 0;
+}
+
+
+bool CheckInvalidFlight(listCB list, ChuyenBay cb)
+{
+	int dem = 0;
+	nodeCB *temp = list.Head;
+	if (temp == NULL){
+	
+		return false;
+	}
+		
+	else
+	{
+		
+		for (; temp != NULL; temp=temp->next)
+		{
+			
+			
+			if (temp->CB.ThoiGianDi.ngay == cb.ThoiGianDi.ngay)
+			{
+				if(temp->CB.ThoiGianDi.thang == cb.ThoiGianDi.thang)
+				{
+					if(temp->CB.ThoiGianDi.nam == cb.ThoiGianDi.nam)
+					{
+							if(strcmp(temp->CB.soHieuMB,cb.soHieuMB)==0)
+							{
+								if(strcmp(temp->CB.MaChuyenBay,cb.MaChuyenBay)!=0)
+								{
+									if(temp->CB.TrangThai==0){
+									return false;}
+									
+								return true;
+								}
+							}
+							
+							
+					}
+				}
+			}
+				
+		}
+		return false;
+	}
+}
+
+
+int CountCB_ThoiGianNoiDen(listCB list, ThoiGian tg, char noiden[])
+{
+	int dem = 0;
+	nodeCB *temp = list.Head;
+	if (temp == NULL){
+	
+		return 0;
+	}
+		
+	else
+	{
+		for (; temp != NULL; temp=temp->next)
+		{
+			if (temp->CB.ThoiGianDi.ngay == tg.ngay )
+			{
+				if(temp->CB.ThoiGianDi.thang == tg.thang)
+				{
+					if(temp->CB.ThoiGianDi.nam == tg.nam)
+					{
+						if(strcmp(temp->CB.SanBayDen,noiden)==0)
+						{
+							dem++;
+						}
+					}
+				}
+			}
+				
+		}
+		return dem;
+	}
+	return 0;
+}
+
+
+int SearchVeHK(listCB list,ListMayBay lmb,char MaCB[],char cmnd[]){
+	ChuyenBay cb;
+	int socho;
+	cb = Search_MaCB(list,MaCB)->CB;
+	socho = Get_slot(lmb,cb.soHieuMB);
+	
+	for(int dem= 1;dem <= socho;dem++)
+	{
+		if(!strcmp(cb.DsVe[dem].cmnd,cmnd )){
+			return dem;
+		}
+	}
+	return 0;
+	
+}
+
+// Tim so thu tu dua vao MaChuyenBay
+int TimSTTChuyenBay( listCB list,char *MaChuyenBayCanTim)
+{
+	int index = 0;
+	for( nodeCB *search = list.Head ; search != NULL; search = search->next)
+	{
+		/*so sanh 2 chuoi voi nhau co phan biet hoa thuong*/
+		if( _stricmp(search->CB.MaChuyenBay,MaChuyenBayCanTim) == 0 )
+		{
+			return index;
+		}
+		index++;
+	}
+	return -1;
+}
+
+// TIM CHUYEN BAY THEO MA~
+nodeCB *TimChuyenBay ( listCB list,char *MaChuyenBayCanTim)
+{
+	if( list.Head == NULL)
+		return NULL;
+	for( nodeCB *search = list.Head ; search != NULL; search = search->next)
+	{
+		if( _strcmpi(search->CB.MaChuyenBay,MaChuyenBayCanTim) == 0 )
+		{
+			return search;
+		}
+	}
+	return NULL;
+}
+
+
 #endif

@@ -72,7 +72,7 @@ int CheckHKtrongCB(listCB list,ListMayBay lmb,char MaCB[],char cmnd[])
 {
 	ChuyenBay cb;
 	int socho;
-	cb = Search_Flight(list,MaCB)->CB;
+	cb = Search_MaCB(list,MaCB)->CB;
 	socho = Get_slot(lmb,cb.soHieuMB);
 	for(int dem= 1;dem <= socho;dem++)
 	{

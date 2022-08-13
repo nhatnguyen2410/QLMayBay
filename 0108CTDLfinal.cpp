@@ -89,43 +89,15 @@ using namespace std;
 
 //------------------------May Bay----------------------------------------------------------------------------------------------------
 
-int Empty_MB(ListMayBay dsMB)
-{
-	return dsMB.soluong == 0;
-}
-int Full_MB(ListMayBay dsMB)
-{
-	return dsMB.soluong == MAXMB;
-}
+
 
 void DocFileMayBay(ListMayBay &listmb);
 
 //------------------------------------------------------------CHECK - GET-----------------------------
-int Check_SoHieu_MB(ListMayBay listMB, char sohieu[])
-{
-	if (Empty_MB(listMB))
-		return -1;
-	else
-	{
-		for (int i = 0; i < listMB.soluong; i++)
-		{
-			if (stricmp(listMB.maybay[i]->soHieuMB, sohieu) == 0)
-				return i;
-		}
-		return -1;
-	}
-}
+
 
 //----------------------Chuyen bay----------------------------------------------------------------------------------------------------
-int Get_socho(ListMayBay lmb, char soHieu[])
-{
-	for (int i = 0; i < lmb.soluong; i++)
-	{
-		if (strcmp(lmb.maybay[i]->soHieuMB, soHieu) == 0)
-			return lmb.maybay[i]->soCho;
-	}
-	return -1;
-}
+
 
 
 //------CHUC NANG CHUYEN BAY-----------------
@@ -236,21 +208,7 @@ int  Delete_after(ptrCB &p)
      return 1;
 }
 
-// Tim so thu tu dua vao MaChuyenBay
-int TimSTTChuyenBay( listCB list,char *MaChuyenBayCanTim)
-{
-	int index = 0;
-	for( nodeCB *search = list.Head ; search != NULL; search = search->next)
-	{
-		/*so sanh 2 chuoi voi nhau co phan biet hoa thuong*/
-		if( _stricmp(search->CB.MaChuyenBay,MaChuyenBayCanTim) == 0 )
-		{
-			return index;
-		}
-		index++;
-	}
-	return -1;
-}
+
 
 nodeCB* DuyetCB(listCB list,int index)
 {
@@ -277,20 +235,7 @@ int FindDestination( listCB list,char* SanBayDenCanTim)
 	}
 	return -1;
 }
-// TIM CHUYEN BAY THEO MA~
-nodeCB *TimChuyenBay ( listCB list,char *MaChuyenBayCanTim)
-{
-	if( list.Head == NULL)
-		return NULL;
-	for( nodeCB *search = list.Head ; search != NULL; search = search->next)
-	{
-		if( _strcmpi(search->CB.MaChuyenBay,MaChuyenBayCanTim) == 0 )
-		{
-			return search;
-		}
-	}
-	return NULL;
-}
+
 //XOA DAU` CHUYEN BAY
 int RemoveHead(listCB &list)
 {
@@ -971,184 +916,19 @@ char *fix_GioiTinh(char *phai)
 	return phai;
 }
 
-nodeCB *Search_MaMBinCB(listCB list, char maMB[]){
-	nodeCB *temp = list.Head;
-	if (temp == NULL){
-	
-		return NULL;
-	}
-		
-	else
-	{
-	
-		for (; temp != NULL; temp=temp->next)
-		{
-			if (strcmp(temp->CB.soHieuMB, maMB) == 0){
-			
-				return temp;
-			}
-				
-		}
-	}
-	return NULL;
-}
-int Check_MaMBinCB(listCB list, char maMB[])
-{
-	if(Search_MaMBinCB(list,maMB)!=NULL){
-		return 1;
-	}
-	return -1;
-}
 
 
-nodeCB *Search_MaCB(listCB list, char macb[]){
-	nodeCB *temp = list.Head;
-	if (temp == NULL){
-	
-		return NULL;
-	}
-		
-	else
-	{
-	
-		for (; temp != NULL; temp=temp->next)
-		{
-			if (strcmp(temp->CB.MaChuyenBay, macb) == 0){
-			
-				return temp;
-			}
-				
-		}
-	}
-	return NULL;
-}
-
-
-
-int Check_MaCB(listCB list, char macb[])
-{
-	if(Search_MaCB(list,macb)!=NULL){
-		return 1;
-	}
-	return -1;
-}
 
 
 
 
  
-int CheckThoiGianNoiDen(ChuyenBay cb,ThoiGian tg,char noiden[])
-{
-			if (cb.ThoiGianDi.ngay == tg.ngay )
-			{
-				if(cb.ThoiGianDi.thang == tg.thang)
-				{
-					if(cb.ThoiGianDi.nam == tg.nam)
-					{
-						if(strcmp(cb.SanBayDen,noiden)==0)
-						{
-							return 1;
-						}
-					}
-				}
-			}
-	return 0;
-}
 
 
-int CountCB_ThoiGianNoiDen(listCB list, ThoiGian tg, char noiden[])
-{
-	int dem = 0;
-	nodeCB *temp = list.Head;
-	if (temp == NULL){
-	
-		return 0;
-	}
-		
-	else
-	{
-		for (; temp != NULL; temp=temp->next)
-		{
-			if (temp->CB.ThoiGianDi.ngay == tg.ngay )
-			{
-				if(temp->CB.ThoiGianDi.thang == tg.thang)
-				{
-					if(temp->CB.ThoiGianDi.nam == tg.nam)
-					{
-						if(strcmp(temp->CB.SanBayDen,noiden)==0)
-						{
-							dem++;
-						}
-					}
-				}
-			}
-				
-		}
-		return dem;
-	}
-	return 0;
-}
-
-bool CheckInvalidFlight(listCB list, ChuyenBay cb)
-{
-	int dem = 0;
-	nodeCB *temp = list.Head;
-	if (temp == NULL){
-	
-		return false;
-	}
-		
-	else
-	{
-		
-		for (; temp != NULL; temp=temp->next)
-		{
-			
-			
-			if (temp->CB.ThoiGianDi.ngay == cb.ThoiGianDi.ngay)
-			{
-				if(temp->CB.ThoiGianDi.thang == cb.ThoiGianDi.thang)
-				{
-					if(temp->CB.ThoiGianDi.nam == cb.ThoiGianDi.nam)
-					{
-							if(strcmp(temp->CB.soHieuMB,cb.soHieuMB)==0)
-							{
-								if(strcmp(temp->CB.MaChuyenBay,cb.MaChuyenBay)!=0)
-								{
-									if(temp->CB.TrangThai==0){
-									return false;}
-									
-								return true;
-								}
-							}
-							
-							
-					}
-				}
-			}
-				
-		}
-		return false;
-	}
-}
 
 
-bool Check_Date(int nam, int thang, int ngay)
-{
-	int Thang[12] = { 31,28,31,30,31,30,31,31,30,31,30,31 };
-	if ( (nam % 4 == 0 && nam % 100 != 0) || nam % 400 == 0)
-	{
-		Thang[1] = 29;
-	}
-	if (thang >= 1 && thang <= 12)
-	{
-		if (ngay >= 1 && ngay <= Thang[thang - 1])
-		{
-			return true;	
-		}
-	}
-	return false;
-}
+
+
 
 bool Check_ThoiGian_ChuyenBay(ThoiGian tg)
 {
@@ -1399,7 +1179,7 @@ void LuuFileChuyenBay(listCB list, listMayBay lmb)
 		fileout << cb.SanBayDen <<endl;
 		fileout << cb.TrangThai <<endl;
 
-		int socho=Get_socho(lmb,cb.soHieuMB);
+		int socho=Get_slot(lmb,cb.soHieuMB);
 		for(int vitri = 1; vitri <= socho; vitri++){
 			if(strcmp(cb.DsVe[vitri].cmnd,"\0"))
 			{
@@ -1450,7 +1230,7 @@ void DocFileChuyenBay(listCB &list, listMayBay lmb)
 			cb.TrangThai = atoi(tmp.c_str());
 			if (Check_ThoiGian_ChuyenBay(cb.ThoiGianDi) == false)
 				cb.TrangThai = 3;
-			int socho = Get_socho(lmb,cb.soHieuMB);
+			int socho = Get_slot(lmb,cb.soHieuMB);
 			initListVe(cb,socho);
 			string tmp1 = "";
 			getline(filein, tmp1);
@@ -3501,7 +3281,7 @@ void NhapChuyenBay(ListMayBay lmb, listCB &list){
 			
 				}while(trung == false);
 				if (cb.SanBayDen == 0) break;
-				int socho = Get_socho(lmb,cb.soHieuMB);
+				int socho = Get_slot(lmb,cb.soHieuMB);
 				
 				if (dem == 8)
 				{
@@ -3992,7 +3772,7 @@ void SuaChuyenBay(ListMayBay lmb, listCB &list)
 
 				if(dem==7)
 				{
-					int socho = Get_socho(lmb,cb_edit.soHieuMB);
+					int socho = Get_slot(lmb,cb_edit.soHieuMB);
 					initListVe(cb_edit,socho);
 					ptr->CB = cb_edit;
 					gotoxy(box2x + xThongBao, box2y + yThongBao); cout<<"DA SUA THANH CONG";
@@ -4333,15 +4113,6 @@ void Delete_MB(ListMayBay &listMB, char sohieu[])
 	
 }
 
-mayBay *SearchMB(ListMayBay lmb, char sohieu[])
-{
-	
-	for (int i = 0; i < lmb.soluong; i++){
-		if (strcmp(lmb.maybay[i]->soHieuMB, sohieu) == 0)
-			return lmb.maybay[i];
-	}
-	return NULL;
-}
 
 
 
@@ -4989,7 +4760,7 @@ void XuatChuyenBay(int &trang,int &tongTrang,ListMayBay lmb,listCB &list){
 					}	
 					
 				}else{
-				int socho = Get_socho(lmb,xuat->CB.soHieuMB);
+				int socho = Get_slot(lmb,xuat->CB.soHieuMB);
 				gotoxy(tabx + tabs + 18,taby +3+dem*2); cout<<socho-xuat->CB.TongSoDaBan;// XUAT SO VE CON LAI
 				}
 				dem++;
@@ -5077,7 +4848,7 @@ void XuatChuyenBayTheoNgay(ListMayBay lmb,listCB list, ThoiGian tg,char noiden[]
 					}	
 					
 				}else{
-				int socho = Get_socho(lmb,xuat->CB.soHieuMB);
+				int socho = Get_slot(lmb,xuat->CB.soHieuMB);
 				gotoxy(tabx + tabs + 18,taby +3+dem*2); cout<<socho-xuat->CB.TongSoDaBan;// XUAT SO VE CON LAI
 				}
 				dem++;
@@ -6215,38 +5986,10 @@ void ThongKeSoLuotBay(listCB lcb, ListMayBay lmb) // thong ke so luot bay cua ma
 
 //---------------------------CHECK HANH KHACH TRONG CHUYEN BAY---------------------------		
 
-int SearchVeHK(listCB list,ListMayBay lmb,char MaCB[],char cmnd[]){
-	ChuyenBay cb;
-	int socho;
-	cb = Search_MaCB(list,MaCB)->CB;
-	socho = Get_socho(lmb,cb.soHieuMB);
-	
-	for(int dem= 1;dem <= socho;dem++)
-	{
-		if(!strcmp(cb.DsVe[dem].cmnd,cmnd )){
-			return dem;
-		}
-	}
-	return 0;
-	
-}
 
 
 
-int CheckDSVe(listCB list,ListMayBay lmb,char MaCB[])
-{
-	ChuyenBay cb;
-	int socho;
-	cb = Search_MaCB(list,MaCB)->CB;
-	socho = Get_socho(lmb,cb.soHieuMB);
-	for(int dem= 1;dem <= socho;dem++)
-	{
-		if(strcmp(cb.DsVe[dem].cmnd,"") ){
-			return 1;
-		}
-	}
-	return 0;
-}	
+
 
 void UIBooking(ListMayBay lmb,listCB list){
 	int trang = 0, tongtrang = 0;
@@ -6424,7 +6167,7 @@ void Danh_Sach_HK_Trong_CB(listCB &list, ListMayBay lmb) // In ra cacs hanh khac
 		
 		SetColor(ColorWHITE); SetBGColor(ColorBLACK);
 		gotoxy(tabx + 4, taby + 3);
-		int socho = Get_socho(lmb, pNodeCB->CB.soHieuMB); 
+		int socho = Get_slot(lmb, pNodeCB->CB.soHieuMB); 
 		int dem = 0;
 		stt = 1 ;
 		for (int i = 1 ; stt <=8+ 8*trang  && i <=socho; i++)
