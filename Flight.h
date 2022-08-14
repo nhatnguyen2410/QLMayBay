@@ -2,6 +2,11 @@
 #define FLIGHT
 #include "Time.h"
 #include "Plane.h"
+#include <ctime>
+#include <sstream>
+#include <locale>
+#include <iomanip>
+using namespace std;
 struct Ve {
     char cmnd[16];
 //    string TTVe;
@@ -98,6 +103,38 @@ bool checkFlightSameTime(listCB list,ListMayBay lmb, nodeCB *cb,char cmnd[16]){
 	return true;
 	
 }
+int test(nodeCB *cb){
+	time_t now=time(0);
+	tm *date=localtime(&now);
+   date->tm_year=cb->CB.ThoiGianDi.nam-1900;
+   date->tm_mon=cb->CB.ThoiGianDi.thang-1;
+   date->tm_mday=cb->CB.ThoiGianDi.ngay;
+   date->tm_hour=cb->CB.ThoiGianDi.gio;
+   date->tm_min=cb->CB.ThoiGianDi.phut;
+   date->tm_isdst = -1;
+    time_t dateCB= mktime(*&date);
+  
+    return date->tm_mon;
+}
+bool validTimeBookingFlight(nodeCB *cb){ 
+	time_t now=time(0);
+	tm *date=localtime(&now);
+   date->tm_year=cb->CB.ThoiGianDi.nam-1900;
+   date->tm_mon=cb->CB.ThoiGianDi.thang-1;
+   date->tm_mday=cb->CB.ThoiGianDi.ngay;
+   date->tm_hour=cb->CB.ThoiGianDi.gio;
+   date->tm_min=cb->CB.ThoiGianDi.phut;
+   date->tm_isdst = -1;
+    time_t dateCB= mktime(*&date);
+  
+  
+	if((dateCB-now)/60>=30){
+		return true;
+	}
+	
+	return false;	
+}
+
 
 int InsertVe(ChuyenBay &cb,int vitri,char cmnd[16]){
 	if (strcmp(cb.DsVe[vitri].cmnd,"\0"))
@@ -222,50 +259,6 @@ int CheckThoiGianNoiDen(ChuyenBay cb,ThoiGian tg,char noiden[])
 }
 
 
-bool CheckInvalidFlight(listCB list, ChuyenBay cb)
-{
-	int dem = 0;
-	nodeCB *temp = list.Head;
-	if (temp == NULL){
-	
-		return false;
-	}
-		
-	else
-	{
-		
-		for (; temp != NULL; temp=temp->next)
-		{
-			
-			
-			if (temp->CB.ThoiGianDi.ngay == cb.ThoiGianDi.ngay)
-			{
-				if(temp->CB.ThoiGianDi.thang == cb.ThoiGianDi.thang)
-				{
-					if(temp->CB.ThoiGianDi.nam == cb.ThoiGianDi.nam)
-					{
-							if(strcmp(temp->CB.soHieuMB,cb.soHieuMB)==0)
-							{
-								if(strcmp(temp->CB.MaChuyenBay,cb.MaChuyenBay)!=0)
-								{
-									if(temp->CB.TrangThai==0){
-									return false;}
-									
-								return true;
-								}
-							}
-							
-							
-					}
-				}
-			}
-				
-		}
-		return false;
-	}
-}
-
-
 int CountCB_ThoiGianNoiDen(listCB list, ThoiGian tg, char noiden[])
 {
 	int dem = 0;
@@ -345,6 +338,78 @@ nodeCB *TimChuyenBay ( listCB list,char *MaChuyenBayCanTim)
 		}
 	}
 	return NULL;
+}
+
+bool Check_ThoiGian_ChuyenBay(ThoiGian tg)
+{
+	int Thang[12] = { 31,28,31,30,31,30,31,31,30,31,30,31 };
+	if (!Check_Date(tg.nam, tg.thang, tg.ngay)) return false;
+
+	time_t baygio = time(0);
+	tm *ltm = localtime(&baygio);
+	ThoiGian dtNow;
+	dtNow.nam = 1900 + ltm->tm_year;
+	dtNow.thang = 1 + ltm->tm_mon;
+	dtNow.ngay = ltm->tm_mday;
+	dtNow.gio = ltm->tm_hour;
+	dtNow.phut = ltm->tm_min;
+
+	if (tg.nam < dtNow.nam) return false;
+	if ((tg.nam == dtNow.nam) && (tg.thang < dtNow.thang))  return false;
+	if ((tg.nam % 400 == 0) || (tg.nam % 4 == 0 && tg.nam % 100 != 0))
+		Thang[1] = 29;
+	if (tg.nam == dtNow.nam && tg.thang == dtNow.thang && tg.ngay < dtNow.ngay)return false;
+	if (tg.nam == dtNow.nam && tg.thang == dtNow.thang && tg.ngay == dtNow.ngay && tg.gio+5 < dtNow.gio)return false;
+	if (tg.nam == dtNow.nam && tg.thang == dtNow.thang && tg.ngay == dtNow.ngay && tg.gio == dtNow.gio && tg.phut <= dtNow.phut)return false;
+	return true;
+}
+
+bool CheckInvalidFlight(listCB list, ChuyenBay cb)
+{
+	int dem = 0;
+	nodeCB *temp = list.Head;
+	if (temp == NULL){
+	
+		return false;
+	}
+		
+	else
+	{
+		
+		for (; temp != NULL; temp=temp->next)
+		{
+			
+			
+			if (temp->CB.ThoiGianDi.ngay == cb.ThoiGianDi.ngay)
+			{
+				if(temp->CB.ThoiGianDi.thang == cb.ThoiGianDi.thang)
+				{
+					if(temp->CB.ThoiGianDi.nam == cb.ThoiGianDi.nam)
+					{
+						if(((cb.ThoiGianDi.gio*60)+cb.ThoiGianDi.phut)-((temp->CB.ThoiGianDi.gio*60)+temp->CB.ThoiGianDi.phut)<180)
+							{
+							if(strcmp(temp->CB.soHieuMB,cb.soHieuMB)==0)
+							{
+								if(strcmp(temp->CB.MaChuyenBay,cb.MaChuyenBay)!=0)
+								{
+								
+										if(temp->CB.TrangThai==0){
+										return false;}
+									
+								return true;
+								}
+							}
+							
+							
+							}	
+					}
+				}
+			}
+				
+			
+		}
+		return false;
+	}
 }
 
 
