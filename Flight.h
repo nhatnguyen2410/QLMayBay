@@ -34,7 +34,8 @@ struct listCB
 typedef struct listCB* ListCB;
 
 
-nodeCB *Search_MaCB(listCB list, char macb[]){
+nodeCB *Search_MaCB(listCB list, char macb[])// search bang ma cb
+{
 	nodeCB *temp = list.Head;
 	if (temp == NULL){
 	
@@ -97,6 +98,31 @@ bool checkFlightSameTime(listCB list,ListMayBay lmb, nodeCB *cb,char cmnd[16]){
 	}
 	return true;
 	
+}
+
+
+bool Check_ThoiGian_ChuyenBay(ThoiGian tg)
+{
+	int Thang[12] = { 31,28,31,30,31,30,31,31,30,31,30,31 };
+	if (!Check_Date(tg.nam, tg.thang, tg.ngay)) return false;
+
+	time_t baygio = time(0);
+	tm *ltm = localtime(&baygio);
+	ThoiGian dtNow;
+	dtNow.nam = 1900 + ltm->tm_year;
+	dtNow.thang = 1 + ltm->tm_mon;
+	dtNow.ngay = ltm->tm_mday;
+	dtNow.gio = ltm->tm_hour;
+	dtNow.phut = ltm->tm_min;
+
+	if (tg.nam < dtNow.nam) return false;
+	if ((tg.nam == dtNow.nam) && (tg.thang < dtNow.thang))  return false;
+	if ((tg.nam % 400 == 0) || (tg.nam % 4 == 0 && tg.nam % 100 != 0))
+		Thang[1] = 29;
+	if (tg.nam == dtNow.nam && tg.thang == dtNow.thang && tg.ngay < dtNow.ngay)return false;
+	if (tg.nam == dtNow.nam && tg.thang == dtNow.thang && tg.ngay == dtNow.ngay && tg.gio+5 < dtNow.gio)return false;
+	if (tg.nam == dtNow.nam && tg.thang == dtNow.thang && tg.ngay == dtNow.ngay && tg.gio == dtNow.gio && tg.phut <= dtNow.phut)return false;
+	return true;
 }
 
 int InsertVe(ChuyenBay &cb,int vitri,char cmnd[16]){
@@ -167,14 +193,16 @@ int CheckDSVe(listCB list,ListMayBay lmb,char MaCB[])
 	return 0;
 }	
 
-int Check_MaCB(listCB list, char macb[])
+int Check_MaCB(listCB list, char macb[]) // kiem tra xem co ma cb da hay chua
 {
 	if(Search_MaCB(list,macb)!=NULL){
 		return 1;
 	}
 	return -1;
 }
-nodeCB *Search_MaMBinCB(listCB list, char maMB[]){
+nodeCB *Search_MaMBinCB(listCB list, char maMB[]) //
+
+{
 	nodeCB *temp = list.Head;
 	if (temp == NULL){
 	
@@ -195,6 +223,8 @@ nodeCB *Search_MaMBinCB(listCB list, char maMB[]){
 	}
 	return NULL;
 }
+
+
 int Check_MaMBinCB(listCB list, char maMB[])
 {
 	if(Search_MaMBinCB(list,maMB)!=NULL){
@@ -244,18 +274,24 @@ bool CheckInvalidFlight(listCB list, ChuyenBay cb)
 				{
 					if(temp->CB.ThoiGianDi.nam == cb.ThoiGianDi.nam)
 					{
+						if(((cb.ThoiGianDi.gio*60)+cb.ThoiGianDi.phut)-((temp->CB.ThoiGianDi.gio*60)+temp->CB.ThoiGianDi.phut)<180)
+							{
 							if(strcmp(temp->CB.soHieuMB,cb.soHieuMB)==0)
 							{
 								if(strcmp(temp->CB.MaChuyenBay,cb.MaChuyenBay)!=0)
 								{
-									if(temp->CB.TrangThai==0){
-									return false;}
+								
+										if(temp->CB.TrangThai==0){
+										return false;}
+									
+									
 									
 								return true;
 								}
 							}
 							
 							
+							}	
 					}
 				}
 			}
@@ -264,7 +300,6 @@ bool CheckInvalidFlight(listCB list, ChuyenBay cb)
 		return false;
 	}
 }
-
 
 int CountCB_ThoiGianNoiDen(listCB list, ThoiGian tg, char noiden[])
 {
