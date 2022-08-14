@@ -138,30 +138,6 @@ bool validTimeBookingFlight(nodeCB *cb){
 
 
 
-bool Check_ThoiGian_ChuyenBay(ThoiGian tg)
-{
-	int Thang[12] = { 31,28,31,30,31,30,31,31,30,31,30,31 };
-	if (!Check_Date(tg.nam, tg.thang, tg.ngay)) return false;
-
-	time_t baygio = time(0);
-	tm *ltm = localtime(&baygio);
-	ThoiGian dtNow;
-	dtNow.nam = 1900 + ltm->tm_year;
-	dtNow.thang = 1 + ltm->tm_mon;
-	dtNow.ngay = ltm->tm_mday;
-	dtNow.gio = ltm->tm_hour;
-	dtNow.phut = ltm->tm_min;
-
-	if (tg.nam < dtNow.nam) return false;
-	if ((tg.nam == dtNow.nam) && (tg.thang < dtNow.thang))  return false;
-	if ((tg.nam % 400 == 0) || (tg.nam % 4 == 0 && tg.nam % 100 != 0))
-		Thang[1] = 29;
-	if (tg.nam == dtNow.nam && tg.thang == dtNow.thang && tg.ngay < dtNow.ngay)return false;
-	if (tg.nam == dtNow.nam && tg.thang == dtNow.thang && tg.ngay == dtNow.ngay && tg.gio+5 < dtNow.gio)return false;
-	if (tg.nam == dtNow.nam && tg.thang == dtNow.thang && tg.ngay == dtNow.ngay && tg.gio == dtNow.gio && tg.phut <= dtNow.phut)return false;
-	return true;
-}
-
 int InsertVe(ChuyenBay &cb,int vitri,char cmnd[16]){
 	if (strcmp(cb.DsVe[vitri].cmnd,"\0"))
 		return 0;
